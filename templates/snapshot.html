@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Snapshots</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 8px 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .snapshot-card {
+            width: 220px;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+            .snapshot-card img {
+                width: 100%;
+                border-radius: 6px;
+            }
+
+        .snapshot-info {
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+            .snapshot-info strong {
+                display: block;
+                margin-bottom: 4px;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Attendance Snapshots</h2>
+
+        <form method="get" action="/snapshots">
+            <input type="text" name="name_filter" placeholder="Search by name" value="{{ name_filter }}">
+            <input type="date" name="date_filter" value="{{ date_filter }}">
+            <button type="submit">Filter</button>
+        </form>
+
+        {% if snapshots %}
+        <div class="grid">
+            {% for snap in snapshots %}
+            <div class="snapshot-card">
+                <img src="/static/{{ snap.path }}" alt="Snapshot">
+                <div class="snapshot-info">
+                    <strong>{{ snap.name }}</strong>
+                    <span>{{ snap.timestamp }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No snapshots found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

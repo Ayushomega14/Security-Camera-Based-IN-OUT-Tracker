@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Attendance Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .form-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+            .form-container input[type="text"] {
+                width: 90%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .form-container button {
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+        .links {
+            margin-top: 30px;
+        }
+
+            .links a {
+                display: inline-block;
+                margin: 10px 15px;
+                color: #fff;
+                background-color: #3498db;
+                padding: 10px 20px;
+                text-decoration: none;
+                font-size: 16px;
+                border-radius: 6px;
+            }
+
+                .links a:hover {
+                    background-color: #2980b9;
+                }
+    </style>
+</head>
+<body>
+    <h1>Smart Attendance Dashboard</h1>
+
+    <div class="form-container">
+        <form method="POST" action="/start_feed">
+            <label for="ip_url">Enter IP Camera RTSP URL:</label>
+            <input type="text" name="ip_url" id="ip_url" placeholder="rtsp://..." required>
+            <input type="hidden" name="source" value="ip">
+            <br>
+            <button type="submit">Start Live Feed</button>
+        </form>
+    </div>
+
+    <div class="links">
+        <a href="/logs">?? View Attendance Logs</a>
+        <a href="/snapshots">?? View Attendance Snapshots</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Camera Feed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            display: flex;
+        }
+
+        .main {
+            flex: 3;
+            padding: 30px;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: #fff;
+            border-left: 1px solid #ccc;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .video-container {
+            border: 4px solid #4CAF50;
+            border-radius: 12px;
+            background-color: #000;
+            position: relative;
+            width: 720px;
+            height: 480px;
+        }
+
+        #videoFeed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .log-entry {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main">
+        <h2>Live Camera Feed</h2>
+        <div class="video-container">
+            <img id="videoFeed" src="{{ url_for('video_feed') }}" alt="Live Video">
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                Loading camera feed...
+            </div>
+        </div>
+        <form method="POST" action="/control">
+            <button class="btn" type="submit" name="action" value="toggle">
+                {{ 'Pause' if play_status else 'Play' }}
+            </button>
+        </form>
+    </div>
+
+    <div class="sidebar">
+        <h3>Today's IN / OUT Logs</h3>
+        <div id="logContainer">
+            <p>Loading logs...</p>
+        </div>
+    </div>
+
+    <script>
+        // Hide loader when first image loads
+        const videoFeed = document.getElementById('videoFeed');
+        const loader = document.getElementById('loader');
+        videoFeed.onload = function () {
+            loader.style.display = 'none';
+        };
+
+        // Fetch live logs every 3 seconds
+        function fetchLogs() {
+            fetch('/live_logs')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('logContainer');
+                    container.innerHTML = '';
+                    if (data.logs.length === 0) {
+                        container.innerHTML = '<p>No logs for today yet.</p>';
+                    } else {
+                        data.logs.forEach(log => {
+                            const entry = document.createElement('div');
+                            entry.className = 'log-entry';
+                            entry.innerHTML = `<strong>${log.name}</strong> - ${log.timestamp} (${log.event})`;
+                            container.appendChild(entry);
+                        });
+                    }
+                })
+                .catch(error => console.error("Log fetch error:", error));
+        }
+
+        fetchLogs(); // initial
+        setInterval(fetchLogs, 3000); // every 3s
+    </script>
+
+</body>
+</html>
