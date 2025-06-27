@@ -1,5 +1,3 @@
-# global_video_stream.py
-
 import cv2
 import threading
 import time
@@ -12,7 +10,7 @@ class VideoStream:
         self.stopped = False
 
         if not self.capture.isOpened():
-            print("? Failed to open video stream.")
+            print("❌ Failed to open video stream.")
             return
 
         self.thread = threading.Thread(target=self.update, daemon=True)
@@ -21,13 +19,16 @@ class VideoStream:
     def update(self):
         while not self.stopped:
             if not self.capture.isOpened():
-                time.sleep(0.1)
+                print("⏳ Reopening stream...")
+                self.capture.open(self.src)
+                time.sleep(0.5)
                 continue
+
             ret, frame = self.capture.read()
             if ret:
                 self.frame = frame
             else:
-                print("?? Failed to grab frame.")
+                print("⚠️ Failed to grab frame.")
                 time.sleep(0.2)
 
     def read(self):
@@ -35,4 +36,5 @@ class VideoStream:
 
     def stop(self):
         self.stopped = True
-        self.capture.release()
+        if self.capture and self.capture.isOpened():
+            self.capture.release()

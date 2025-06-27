@@ -1,6 +1,4 @@
-﻿# main.py
-
-import os
+﻿import os
 import cv2
 import face_recognition
 from datetime import datetime, timedelta
@@ -82,7 +80,6 @@ def generate_frames(video_stream):
     known_face_encodings, known_face_names = load_known_faces("face_db")
     in_logged = set()
     last_seen_time = {}
-    snapshot_taken = set()
     absence_threshold = timedelta(seconds=5)
 
     while True:
@@ -116,13 +113,12 @@ def generate_frames(video_stream):
                     if name not in in_logged:
                         log_event_sql(name, "IN")
                         in_logged.add(name)
-                        snapshot_key = f"{datetime.now().date()}_{name}"
-                        if snapshot_key not in snapshot_taken:
-                            date_str = datetime.now().strftime("%Y-%m-%d")
-                            folder = ensure_snapshot_dir(date_str, name)
-                            snapshot_path = os.path.join(folder, f"{datetime.now().strftime('%H-%M-%S')}.jpg")
-                            cv2.imwrite(snapshot_path, frame)
-                            snapshot_taken.add(snapshot_key)
+
+                        date_str = datetime.now().strftime("%Y-%m-%d")
+                        folder = ensure_snapshot_dir(date_str, name)
+                        timestamp_str = datetime.now().strftime('%H-%M-%S')
+                        snapshot_path = os.path.join(folder, f"{timestamp_str}.jpg")
+                        cv2.imwrite(snapshot_path, frame)
 
                     last_seen_time[name] = datetime.now()
 
